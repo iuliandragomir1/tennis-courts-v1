@@ -1,6 +1,7 @@
 package com.tenniscourts.reservations;
 
 import com.tenniscourts.schedules.Schedule;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -33,4 +34,57 @@ public class ReservationServiceTest {
 
         Assert.assertEquals(reservationService.getRefundValue(Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build()), new BigDecimal(10));
     }
+
+    @Test
+    public void getRefundValue0() {
+        Schedule schedule = new Schedule();
+
+        LocalDateTime startDateTime = LocalDateTime.now().minusHours(1);
+
+        schedule.setStartDateTime(startDateTime);
+        BigDecimal actualRefundValue = reservationService.getRefundValue(
+            Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build());
+
+        Assert.assertThat(new BigDecimal(0), Matchers.comparesEqualTo(actualRefundValue));
+    }
+
+    @Test
+    public void getRefundValue25() {
+        Schedule schedule = new Schedule();
+
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(1);
+
+        schedule.setStartDateTime(startDateTime);
+        BigDecimal actualRefundValue = reservationService.getRefundValue(
+            Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build());
+
+        Assert.assertThat(new BigDecimal("2.5"), Matchers.comparesEqualTo(actualRefundValue));
+    }
+
+    @Test
+    public void getRefundValue50() {
+        Schedule schedule = new Schedule();
+
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(10);
+
+        schedule.setStartDateTime(startDateTime);
+        BigDecimal actualRefundValue = reservationService.getRefundValue(
+            Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build());
+
+        Assert.assertThat(new BigDecimal(5), Matchers.comparesEqualTo(actualRefundValue));
+    }
+
+    @Test
+    public void getRefundValue75() {
+        Schedule schedule = new Schedule();
+
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(14);
+
+        schedule.setStartDateTime(startDateTime);
+        BigDecimal actualRefundValue = reservationService.getRefundValue(
+            Reservation.builder().schedule(schedule).value(new BigDecimal(10L)).build());
+
+        Assert.assertThat(new BigDecimal("7.5"), Matchers.comparesEqualTo(actualRefundValue));
+    }
+
 }
